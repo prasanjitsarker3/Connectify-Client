@@ -14,6 +14,7 @@ import { baseApi } from "./baseApi";
 import authReducer from "./ReduxSlice/authSlice";
 import sidebarReducer from "./ReduxSlice/sidebarSlice";
 import userSlice from "./ReduxSlice/userSlice";
+import callReducer from "./ReduxSlice/videoCallSlice";
 
 const authPersistConfig = {
   key: "auth",
@@ -28,6 +29,7 @@ const store = configureStore({
     auth: persistedAuthReducer,
     sidebar: sidebarReducer,
     user: userSlice,
+    call: callReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

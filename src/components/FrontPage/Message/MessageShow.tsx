@@ -5,10 +5,12 @@ import { RootState } from "@/components/Redux/store";
 import React from "react";
 import MessageStatus from "./MessageStatus";
 import { formatDate } from "@/components/UtlitiFunction/DateFormate";
+import Image from "next/image";
 
 const MessageShow = ({ messages }: { messages: any }) => {
   const currentUser = useAppSelector((state: RootState) => state.user.id);
   const user = useAuthUser();
+  console.log("Message", messages);
 
   return (
     <div className="h-[80vh] w-full relative flex-grow overflow-auto custom-scrollbar ">
@@ -41,6 +43,27 @@ const MessageShow = ({ messages }: { messages: any }) => {
                         <MessageStatus messageStatus={message.messageStatus} />
                       )}
                     </div>
+                  </div>
+                </div>
+              )}
+              {message.type === "image" && (
+                <div
+                  className={`max-w-[70%] ${
+                    message.senderId === user?.id ? "ml-auto" : "mr-auto"
+                  } flex flex-col items-end`}
+                >
+                  <Image
+                    src={message.message}
+                    width={200}
+                    height={200}
+                    alt="Sent Image"
+                    className="w-full max-w-xs rounded-lg"
+                  />
+                  <div className="flex gap-1 justify-between items-center text-xs text-gray-500 mt-1">
+                    <span>{formatDate(message.createdAt)}</span>
+                    {message.senderId === user.id && (
+                      <MessageStatus messageStatus={message.messageStatus} />
+                    )}
                   </div>
                 </div>
               )}

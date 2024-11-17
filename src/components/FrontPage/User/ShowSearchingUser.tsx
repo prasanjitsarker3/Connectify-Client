@@ -1,13 +1,16 @@
 "use client";
-import { useAppDispatch } from "@/components/Redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/components/Redux/hooks";
 import { toggleSidebar } from "@/components/Redux/ReduxSlice/sidebarSlice";
 import { setUserInfo } from "@/components/Redux/ReduxSlice/userSlice";
+import { RootState } from "@/components/Redux/store";
+import { useSocket } from "@/components/SocketIO/socketProvider";
 import Image from "next/image";
 import React from "react";
 
 const ShowSearchingUser = ({ data }: { data: any }) => {
+  console.log("Data", data);
+  const { onlineUsers } = useSocket();
   const dispatch = useAppDispatch();
-  const isActive = true;
 
   const handleUserClick = (id: number, name: string, profile: string) => {
     dispatch(setUserInfo({ id, name, profile }));
@@ -15,6 +18,8 @@ const ShowSearchingUser = ({ data }: { data: any }) => {
       dispatch(toggleSidebar());
     }
   };
+  const activeUser =
+    data?.id && onlineUsers.includes(data.id as unknown as string);
 
   return (
     <div>
@@ -24,10 +29,7 @@ const ShowSearchingUser = ({ data }: { data: any }) => {
       >
         <div className="relative inline-block h-14 w-14 rounded-full border border-gray-300">
           <Image
-            src={
-              data?.profile ||
-              "https://img.freepik.com/premium-vector/office-worker-wearing-glasses_277909-81.jpg?ga=GA1.1.406508785.1728154460&semt=ais_hybrid"
-            }
+            src={data.profile}
             alt=""
             width={100}
             height={100}
@@ -35,7 +37,7 @@ const ShowSearchingUser = ({ data }: { data: any }) => {
           />
           <span
             className={`absolute top-0 right-0 h-2 w-2 rounded-full ${
-              isActive ? "bg-green-500" : "bg-red-500"
+              activeUser ? "bg-green-500" : "bg-red-500"
             }`}
           ></span>
         </div>

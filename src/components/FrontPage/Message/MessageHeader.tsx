@@ -1,6 +1,10 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/components/Redux/hooks";
 import { toggleSidebar } from "@/components/Redux/ReduxSlice/sidebarSlice";
+import {
+  videoCall,
+  voiceCall,
+} from "@/components/Redux/ReduxSlice/videoCallSlice";
 import { RootState } from "@/components/Redux/store";
 import { useSocket } from "@/components/SocketIO/socketProvider";
 import { ArrowLeft, EllipsisVertical, Phone, Video } from "lucide-react";
@@ -8,14 +12,36 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const MessageHeader = () => {
+  const { onlineUsers } = useSocket();
   const user = useAppSelector((state: RootState) => state.user);
+  const userId = user?.id as unknown as string;
 
   const dispatch = useAppDispatch();
   const handleToggle = () => {
     dispatch(toggleSidebar());
   };
 
-  const isActive = false;
+  const activeUser =
+    user?.id && onlineUsers.includes(user.id as unknown as string);
+
+  const handleVoiceCall = () => {
+    dispatch(
+      voiceCall({
+        currentChatUser: userId,
+        roomId: Date.now(),
+      })
+    );
+  };
+
+  // Handle Video Call
+  const handleVideoCall = () => {
+    dispatch(
+      videoCall({
+        currentChatUser: userId,
+        roomId: Date.now(),
+      })
+    );
+  };
 
   return (
     <div className=" bg-gray-100">
@@ -41,21 +67,29 @@ const MessageHeader = () => {
             />
             <span
               className={`absolute top-0 right-0 h-3 w-3 rounded-full ${
-                isActive ? "bg-green-500" : "bg-red-500"
+                activeUser ? "bg-green-500" : "bg-red-500"
               }`}
             ></span>
           </div>
           <div className="">
             <h1 className=" text-base md:text-lg font-medium">{user?.name}</h1>
-            <h1 className=" md:text-sm text-xs">Active Now</h1>
+            <h1 className=" md:text-sm text-xs">
+              {activeUser ? "Active Now" : "Offline"}
+            </h1>
           </div>
         </div>
 
         <div className=" flex items-center gap-3">
-          <div className=" bg-gray-200 cursor-pointer h-10 w-10 md:h-12 md:w-12 rounded-full flex justify-center items-center">
+          <div
+            onClick={handleVoiceCall}
+            className=" bg-gray-200 cursor-pointer h-10 w-10 md:h-12 md:w-12 rounded-full flex justify-center items-center"
+          >
             <Phone />
           </div>
-          <div className=" bg-gray-200 cursor-pointer h-10 w-10 md:h-12 md:w-12 rounded-full flex justify-center items-center">
+          <div
+            onClick={handleVideoCall}
+            className=" bg-gray-200 cursor-pointer h-10 w-10 md:h-12 md:w-12 rounded-full flex justify-center items-center"
+          >
             <Video />
           </div>
           <div className=" bg-gray-200 cursor-pointer h-10 w-10 md:h-12 md:w-12 rounded-full flex justify-center items-center">

@@ -10,6 +10,14 @@ const userApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["message"],
     }),
+    sendMessageWithImage: builder.mutation({
+      query: (data) => ({
+        url: "/message/sendimg",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["message"],
+    }),
 
     getMessage: builder.query({
       query: (id: string) => ({
@@ -18,7 +26,20 @@ const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ["message"],
     }),
+
+    getContactMessage: builder.query({
+      query: (id: string) => ({
+        url: `/message/contact/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["message"],
+    }),
   }),
 });
 
-export const { useSendMessageDataMutation, useGetMessageQuery } = userApi;
+export const {
+  useSendMessageDataMutation,
+  useGetMessageQuery,
+  useSendMessageWithImageMutation,
+  useGetContactMessageQuery,
+} = userApi;
